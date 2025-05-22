@@ -1,0 +1,16 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = 
+DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+}
+
+model Pokemon {
+  id        Int      @id @default(autoincrement())
+  name      String
+  types     String[]
+  abilities String[]
+}
