@@ -1,45 +1,50 @@
-// src/app/bestiary/page.tsx
 import Image from 'next/image';
 
-type Pokemon = {
-  name: string;
-  url: string;
-};
+async function getPokemons() {
+  const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=10');
+  const json = await res.json();
 
-async function fetchPokemonList(): Promise<Pokemon[]> {
-  const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151'); // Gen 1
-  const data = await res.json();
-  return data.results;
+  const detailedPokemonData = await Promise.all(
+    json.results.map(async (pokemon: any) => {
+      const res = await fetch(pokemon.url);
+      return await res.json();
+    })
+  );
+
+  return detailedPokemonData;
 }
 
-export default async function BestiaryPage() {
-  const pokemonList = await fetchPokemonList();
+export default async function HomePage() {
+  const pokemons = await getPokemons();
 
   return (
-    <main className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">The Sacred Bestiary</h1>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {pokemonList.map((pokemon, index) => {
-          const id = index + 1;
-          const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-
-          return (
-            <div
-              key={pokemon.name}
-              className="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-lg transition"
-            >
-              <Image
-                src={imageUrl}
-                alt={pokemon.name}
-                width={96}
-                height={96}
-                className="mx-auto"
-              />
-              <p className="capitalize font-medium mt-2">{pokemon.name}</p>
-            </div>
-          );
-        })}
-      </div>
+    <main className="p-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-black">
+      {pokemons.map((pokemon: any) => (
+        <div
+          key={pokemon.id}
+          className="border rounded-xl p-4 shadow-md text-center"
+        >
+          <h2 className="text-lg font-semibold capitalize">{pokemon.name}</h2>
+          <Image
+            src={pokemon.sprites.front_default}
+            alt={pokemon.name}
+            width={100}
+            height={100}
+            className="mx-auto"
+          />
+          <p color='black'>ID: {pokemon.id}</p>
+          <p>Height: {pokemon.height}</p>
+          <p>Weight: {pokemon.weight}</p>
+          <div>
+            <p>Types:</p>
+            <ul>
+              {pokemon.types.map((typeObj: any) => (
+                <li key={typeObj.type.name}>{typeObj.type.name}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
     </main>
   );
 }
