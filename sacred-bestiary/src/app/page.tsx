@@ -18,7 +18,7 @@ export default async function HomePage() {
   const pokemons = await getPokemons();
 
   return (
-    <main className="p-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-black">
+    <main className="p-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-white">
       {pokemons.map((pokemon: any) => (
         <div
           key={pokemon.id}
@@ -32,7 +32,7 @@ export default async function HomePage() {
             height={100}
             className="mx-auto"
           />
-          <p color='black'>ID: {pokemon.id}</p>
+          <p>ID: {pokemon.id}</p>
           <p>Height: {pokemon.height}</p>
           <p>Weight: {pokemon.weight}</p>
           <div>
